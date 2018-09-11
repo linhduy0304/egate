@@ -14,6 +14,7 @@ const Button = ({
   borderRadius = 20,
   width = screen.width-40,
   height = 45,
+  disabled=false,
   color = '#19353d',
   fontWeight = 'bold',
   marginTop = 20,
@@ -26,10 +27,12 @@ const Button = ({
       marginTop,
       height,
       width,
+      
       backgroundColor,
       alignItems: 'center',
       justifyContent: 'center',
     }} 
+    disabled={disabled}
     onPress={onPress} >
     <Text style={{
       fontSize,

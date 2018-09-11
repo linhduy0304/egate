@@ -6,47 +6,81 @@ import {
 } from 'react-native';
 import {
   LOGIN_REQUEST,
-  LOGIN_SUCC,
-  LOGIN_FAIL,
-  PROFILE_SUCCESS
+  LOGIN_SUCCESS,
+
+  CHECK_SERVER_SUCCESS,
+  
 } from '../config/types';
 import { Actions } from 'react-native-router-flux';
 const Auth = require('../services/Auth');
 
+//login
+export const loginRequest = () => {
+  return {
+    type: LOGIN_REQUEST,
+  }
+}
+export const loginSuccess = () => {
+  return {
+    type: LOGIN_SUCCESS,
+  }
+}
+export const login = (body) => {
+  return dispatch => {
+    dispatch(loginRequest())
+    return Auth.login(body)
+      .then(res => {
+        switch(res.status) {
+          case 200:
+            Actions.tab({type: 'reset'})
+            dispatch(loginSuccess())
+          default:
+            Alert.alert(
+              'Error!',
+              res.message,
+              [
+                {text: 'OK', onPress: () => null},
+              ],
+            )
+            dispatch(loginSuccess())
+            return
+        }
+      })
+      .catch((error) => {
+         return dispatch(checkServerSuccess())
+      });
+  };
+}
+
+//check server
+export const checkServerSuccess = () => {
+  return {
+    type: CHECK_SERVER_SUCCESS,
+  }
+}
 export const checkServer = () => {
   return dispatch => {
     return Auth.checkServer()
       .then(res => {
-        console.log(res)
         if(res.status) {
-          Actions.tab({type: 'reset'})
+          Actions.login({type: 'reset'})
+          dispatch(checkServerSuccess())
         }else {
           Alert.alert(
-            'Notification',
+            'Error',
             'Not connected to server',
             [
               {text: 'Retry', onPress: () => dispatch(checkServer())},
             ],
-            { cancelable: false }
           )
+          dispatch(checkServerSuccess())
+          return
         }
-        // switch(res.status) {
-        //   case 1:
-        //     new Store().storeSession(Const.ARR_ID_NOTI, []);
-        //     new Store().storeSession(Const.TOKEN, res.data.token);
-        //     new Store().storeSession(Const.IS_LOGIN, true);
-        //     Actions.tab({type: 'reset'})
-        //     dispatch(profileUserSuccess(res.data.info));
-        //     dispatch(loginSuccess());
-        //     return;
-        //   default:
-        //     SimpleToast.show(res.meta.message)
-        //     dispatch(loginFail());
-        //     return;
-        // }
       })
       .catch((error) => {
-        // dispatch(loginFail())
+        dispatch(checkServerSuccess())
+        return;
       });
   };
 }
+

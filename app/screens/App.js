@@ -5,7 +5,8 @@ import {
   View,
   StatusBar,
   Image,
-  Text
+  Text,
+  NetInfo
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import SplashScreen from 'react-native-splash-screen'
@@ -15,29 +16,57 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isConnected: null,
     };
+    this.handleIsConnected = this.handleIsConnected.bind(this);
+  }
+
+  handleIsConnected(isConnected) {
+    this.setState({ isConnected });
+    if(isConnected) {
+      this.props.checkServer()
+    }
   }
 
   componentWillMount = () => {
-    this.props.checkServer()
-    // Actions.tab({type: 'reset'})
+    NetInfo.isConnected.fetch().then(isConnected => {
+      this.handleIsConnected(isConnected);
+    });
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleIsConnected
+    );
   };
   
   componentDidMount() {
-      SplashScreen.hide();
+    SplashScreen.hide();
   }
-  
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener(
+      'change',
+      this.handleIsConnected
+    );
+  }
 
   render() {
     return (
       <View style={Css.container}>
+        {/* <NoInternet/> */}
         <StatusBar
           backgroundColor= '#23434d'
         />
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Image style={{height: 50, width: 50}} source={require('../icons/loading.gif')}/>
-          <Text style={{color: '#fff'}}>Connecting to server</Text>
-        </View>
+        {!this.state.isConnected ? 
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={{color: '#fff'}}>Waiting For Network</Text>
+          </View>
+          :
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Image style={{height: 50, width: 50}} source={require('../icons/loading.gif')}/>
+            <Text style={{color: '#fff'}}>Connecting to server</Text>
+          </View>
+        }
+       
       </View>
     );
   }
