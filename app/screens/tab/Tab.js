@@ -5,7 +5,8 @@ import {
   View, 
   Text,
   Image,
-  StyleSheet
+  StyleSheet,
+  AppState
 } from 'react-native';
 import TabNavigator from 'react-native-tab-navigator';
 import Home from './Home';
@@ -13,6 +14,8 @@ import Notify from './Notify';
 import Setting from './Setting';
 import History from './History';
 import SplashScreen from 'react-native-splash-screen'
+import Store from '../../services/Store';
+const Const = require('../../services/Const');
 
 class Tab extends Component {
   constructor(props) {
@@ -22,13 +25,42 @@ class Tab extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
+    AppState.addEventListener('change', this._handleAppStateChange);
     SplashScreen.hide();
-}
+  }
 
+  componentWillUnmount = () => {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  chekActiveApp = (nextAppState) => {
+    console.log('ddd'+nextAppState)
+    if(nextAppState == 'active') {
+      new Store().getSession(Const.TIME_ACTIVE).then(time => {
+        var a = (Date.now() - time)/1000/60;
+        if(a >= 1) {
+          Actions.detail2()
+        }else {
+          let time = new Date()
+          new Store().storeSession(Const.TIME_ACTIVE, time.getTime());
+        }
+      })
+    }else {
+      let time = new Date()
+      new Store().storeSession(Const.TIME_ACTIVE, time.getTime());
+    }
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if(this.props.auth.checkServer) {
+      if(this.props.profile.checkPincode == true) {
+        this.chekActiveApp(nextAppState)
+      }
+    }
+  }
 
   render() {
-    console.log('tab')
     return (
       <TabNavigator 
         hidesTabTouch={true}
@@ -82,4 +114,20 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
 })
-export default Tab;
+
+import {connect} from 'react-redux';
+import {checkServer} from '../../actions/auth';
+import { Actions } from 'react-native-router-flux';
+
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth,
+    profile: state.profile,
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    checkServer: () => dispatch(checkServer()),
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Tab);

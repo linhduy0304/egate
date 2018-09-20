@@ -49,10 +49,10 @@ class Item extends React.Component{
   }
 
   render() {
-   const opacity = this.state.spinValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-    });
+  //  const opacity = this.state.spinValue.interpolate({
+  //       inputRange: [0, 1],
+  //       outputRange: [0, 1],
+  //   });
     const {active} = this.props;
     const {data, index} = this.props;
     return (
@@ -71,26 +71,26 @@ class Item extends React.Component{
             useNativeDriver={this.props.useNativeDriver}
             style={css.ctActive} >
             <View style={css.ct}>
-            <Image style={css.icon} source={data.icon} />
+            <Image style={css.icon} source={{uri: data.icon}} />
             <View style={css.center}>
               <Text style={css.name}>{data.name}</Text>
               { 
                 active === index ?
                   null
                 :
-                <Text style={css.sub}>{data.sub}</Text>
+                <Text style={css.sub}>{data.info.price_usd}</Text>
               }
             </View>
             {
               active === index ? 
                 <Animated.View style={[css.ctPercentActive,]}>
-                  <Text style={css.percentActive}>{data.incre ? '+': '-'} {data.percent}%</Text>
+                  <Text style={css.percentActive}>{data.incre ? '+': '-'} {data.info.percent_change_1h}%</Text>
                 </Animated.View>
               : 
               <Animated.View style={[css.right ,]}>
-                <Text style={css.price}>{data.price}</Text>
+                <Text style={css.price}>{data.info.price_btc}</Text>
                 <View style={css.ctPercent}>
-                  <Text style={[css.percent, {color: data.incre ? '#12ff8a' : '#ffba00'}]}>{data.percent}%</Text>
+                  <Text style={[css.percent, {color: data.incre ? '#12ff8a' : '#ffba00'}]}>{data.info.percent_change_1h}%</Text>
                   <Image style={{width: 7, height: 10}} source={this.renderIcon(data.incre)}/>
                 </View>
               </Animated.View>
@@ -100,8 +100,8 @@ class Item extends React.Component{
             {
               active === index ?
               <View>
-                <Text style={css.priceActive}>{data.price} EGT</Text>
-                <Text style={css.dollar}>$ {data.dollar}</Text>
+                <Text style={css.priceActive}>{data.info.price_btc} {data.symbol}</Text>
+                <Text style={css.dollar}>$ {data.info.price_usd}</Text>
                 <View style={css.ctBot}>
                   <TouchableOpacity onPress={() => Actions.detail2()} style={[css.ctSend, {paddingLeft: 20}]}>
                     <Image style={{height, width: height*39/30}} source={require('../../icons/ic_detail.png')}/>

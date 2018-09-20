@@ -21,16 +21,21 @@ import Triangle from '../../components/Triangle';
 import TriangleBot from '../../components/TriangleBot';
 import {validateEmail} from '../../components/Functions';
 import { TextField } from 'react-native-material-textfield';
+import SplashScreen from 'react-native-splash-screen'
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      pass: '',
+      email: 'linhduy.0304.utc@gmail.com',
+      pass: 'Conheonho9x',
       errEmail: null,
       errPass: null,
     };
+  }
+
+  componentDidMount() {
+    SplashScreen.hide();
   }
 
   onChangeEmail = (text) => {
@@ -67,10 +72,9 @@ class Login extends Component {
       this.refs.pass.focus()
       return
     };
-    var body = {
-      email: email,
-      password: pass,
-    };
+    var body = new FormData()
+    body.append('email', email)
+    body.append('password', pass)
     Keyboard.dismiss();
     this.props.login(body);
   }
@@ -100,10 +104,10 @@ class Login extends Component {
             <View>
               {
                 errEmail ? 
-                <Image style={styles.iconAbsolute} source={require('../../icons/ic_false.png')}/>
+                <Image style={Css.iconAbsolute} source={require('../../icons/ic_false.png')}/>
                 : 
                 email !== '' ?
-                <Image style={styles.iconAbsolute} source={require('../../icons/ic_true.png')}/>
+                <Image style={Css.iconAbsolute} source={require('../../icons/ic_true.png')}/>
                 :null
               }
               <TextField

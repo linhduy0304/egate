@@ -18,11 +18,12 @@ class Security extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: false
+      value: this.props.profile.checkPincode
     };
   }
 
   render() {
+    console.log(this.props.profile)
     return (
       <View style={styles.container}>
         <Nav title='Security'>
@@ -46,7 +47,7 @@ class Security extends Component {
               }}
             />
           </View>
-          <View style={styles.ctItem}>
+          {/* <View style={styles.ctItem}>
             <View>
               <Text style={styles.title}>Verify with Touch ID</Text>
               <Text style={styles.sub}>Verify with Touch ID</Text>
@@ -59,7 +60,7 @@ class Security extends Component {
                 callback(value => this.setState({value}))
               }}
             />
-          </View>
+          </View> */}
         </View>
         
         
@@ -98,4 +99,18 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Security;
+import {connect} from 'react-redux';
+// import {checkServer} from '../../actions/auth';
+
+const mapStateToProps = (state) => {
+  return {
+    profile: state.profile,
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // checkServer: () => dispatch(checkServer()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Security);

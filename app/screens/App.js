@@ -6,7 +6,10 @@ import {
   StatusBar,
   Image,
   Text,
-  NetInfo
+  NetInfo,
+  AppState,
+  Linking,
+  Platform
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import SplashScreen from 'react-native-splash-screen'
@@ -18,17 +21,24 @@ class App extends Component {
     this.state = {
       isConnected: null,
     };
-    this.handleIsConnected = this.handleIsConnected.bind(this);
   }
 
-  handleIsConnected(isConnected) {
+  handleIsConnected = (isConnected) => {
     this.setState({ isConnected });
     if(isConnected) {
       this.props.checkServer()
     }
   }
 
+  handleOpenURL = (event) => {
+    // alert(event.url)
+    // if(event.url === 'linhduy://') {
+    //   Actions.register()
+    // }
+  }
+
   componentWillMount = () => {
+    
     NetInfo.isConnected.fetch().then(isConnected => {
       this.handleIsConnected(isConnected);
     });
@@ -36,13 +46,22 @@ class App extends Component {
       'connectionChange',
       this.handleIsConnected
     );
+    
   };
-  
+
   componentDidMount() {
+    if (Platform.OS === 'android') {
+      Linking.getInitialURL().then(url => {
+        // alert(url);
+      });
+    } else {
+      Linking.addEventListener('url', this.handleOpenURL);
+    }
     SplashScreen.hide();
   }
 
   componentWillUnmount() {
+    Linking.removeEventListener('url', this.handleOpenURL);
     NetInfo.isConnected.removeEventListener(
       'change',
       this.handleIsConnected

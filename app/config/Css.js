@@ -21,4 +21,13 @@ module.exports = StyleSheet.create({
     height: 20,
     width: 20*19/35
   },
+  iconAbsolute: {
+    position: 'absolute',
+    right: 0,
+    bottom: 15,
+    zIndex: 100,
+    bottom: 15,
+    height: 15,
+    width: 15
+  },
 })

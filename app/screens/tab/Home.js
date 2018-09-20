@@ -35,92 +35,13 @@ class Home extends PureComponent {
       //   dollar: '43,33'
       // },
       active: 0,
-      wallet: [
-        {
-          icon: require('../../icons/ic_egate.png'),
-          name: 'Egate',
-          sub: '401',
-          type: 'bounceIn',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-        {
-          icon: require('../../icons/ic_bitcoin.png'),
-          name: 'Bitcoin',
-          sub: '401',
-          type: 'bounceInLeft',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-        {
-          icon: require('../../icons/ic_ethereum.png'),
-          name: 'Ethereum',
-          sub: '401',
-          type: 'bounceInRight',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: false,
-        },
-        {
-          icon: require('../../icons/ic_litecoin.png'),
-          name: 'Lite',
-          sub: '401',
-          type: 'fadeIn',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-        {
-          icon: require('../../icons/ic_bitcoin_cash.png'),
-          name: 'Bitcoin Cash',
-          sub: '401',
-          type: 'fadeInLeft',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-
-        {
-          icon: require('../../icons/ic_bitcoin.png'),
-          name: 'Bitcoin',
-          sub: '401',
-          type: 'fadeInLeftBig',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-        {
-          icon: require('../../icons/ic_litecoin.png'),
-          name: 'Lite',
-          sub: '401',
-          type: 'slideInLeft',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-        {
-          icon: require('../../icons/ic_bitcoin_cash.png'),
-          name: 'Bitcoin Cash',
-          sub: '401',
-          type: 'slideInRight',
-          price: '0,33333333',
-          percent: '3.97',
-          dollar: '43,33',
-          incre: true,
-        },
-       
-      ],
     };
   }
+
+  componentWillMount = () => {
+    this.props.checkSession()
+  };
+  
 
   setActive(name, componentRef, animationType) {
     componentRef.setNativeProps({
@@ -146,7 +67,7 @@ class Home extends PureComponent {
   }
 
   render() {
-    const {user, myWallet, wallet} = this.state;
+    const {user} = this.state;
     return (
       <View style={[Css.container, {alignItems: 'center'}]}>
         <StatusBar
@@ -167,7 +88,7 @@ class Home extends PureComponent {
               contentInsetAdjustmentBehavior="automatic"
               duration={1100}
               // delay={1400}
-              data={wallet}
+              data={this.props.auth.data}
               keyExtractor={(item, index) => index.toString()}
               renderItem={data => <Item 
                                     animationType={'fadeIn'}
@@ -193,4 +114,19 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Home;
+import {connect} from 'react-redux';
+import {login, checkSession} from '../../actions/auth';
+
+const mapStateToProps = (state) => {
+  return {
+    auth: state.auth
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    login: (body) => dispatch(login(body)),
+    checkSession: () => dispatch(checkSession()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

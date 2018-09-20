@@ -3,12 +3,14 @@
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  CHECK_SERVER_SUCCESS
+  CHECK_SERVER_SUCCESS,
 } from '../config/types';
 
 const initialState = {
   auth: null,
-  loading: null
+  loading: null,
+  checkServer: null,
+  data: null
 }
 
 export default function auth (state = initialState, action) {
@@ -17,6 +19,7 @@ export default function auth (state = initialState, action) {
       return {
         ...state,
         loading: null,
+        checkServer: true
       }
       
     case LOGIN_REQUEST: 
@@ -27,7 +30,8 @@ export default function auth (state = initialState, action) {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        loading: null
+        loading: null,
+        data: action.data
       }
     
     default: 

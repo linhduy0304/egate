@@ -1,17 +1,13 @@
 
 
+import Const from './Const';
+import Store from './Store';
+
 export function post(url, data) {
-  return fetch(
-    url, 
-    {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    }
-  ).then(res => {
+  return fetch(url, {
+    method: "post",
+    body: data
+  }).then(res => {
     return res.json()
   })
   .then(res => {
@@ -19,9 +15,31 @@ export function post(url, data) {
   })
   .catch(error => {
     return {
-      status: 500
+      code: 500
     }
   })
+}
+
+export function getWithAuth(url, token) {
+    return fetch(
+      url, 
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': token,
+        },
+      }
+    ).then(res => {
+      return res.json()
+    })
+    .then(res => {
+      return res
+    })
+    .catch(error => {
+      return {
+        status: 500
+      }
+    })
 }
 
 export function get(url) {
@@ -29,10 +47,7 @@ export function get(url) {
     url, 
     {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+     
     }
   ).then(res => {
     return res.json()
